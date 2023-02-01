@@ -8,12 +8,13 @@ def cortar(img, w, h):
     box = ((width-newWidth)/2, 0, (width+newWidth)/2, height)
     img = img.crop(box)
     img = img.resize((w,h))
+    img.save('teste.jpg')
     return img
 
-def concatenar(img1, img2):
+def concatenar(img1, img2, width, height):
     result = Image.new("RGB", (2*width, height), "white")
     result.paste(img1, (0, 0))
-    result.paste(img2, (500, 0))
+    result.paste(img2, (width, 0))
     return result
 
 def texto(img, frase1, frase2):
@@ -25,16 +26,20 @@ def texto(img, frase1, frase2):
 imagem1 = Image.open('laptop.jpg')
 imagem2 = Image.open('paisagem.jpg')
 
-width, height = 500, 700
+IMAGE_WIDTH = 500
+IMAGE_HEIGHT = 700
 
-frase1 = 'Turn this...'
-frase2 = '...Into that!!!'
+text_left = 'Turn this...'
+text_right = '...Into that!!!'
 
-fonte = ImageFont.truetype("arial.ttf", 50)
+FONT_SIZE = 50
+FONT_PATH = "arial.ttf"
 
-img1 = cortar(imagem1, width, height)
-img2 = cortar(imagem2, width, height)
-result = concatenar(img1, img2)
-result = texto(result, frase1, frase2)
+fonte = ImageFont.truetype(FONT_PATH, FONT_SIZE)
+
+img1 = cortar(imagem1, IMAGE_WIDTH, IMAGE_HEIGHT)
+img2 = cortar(imagem2, IMAGE_WIDTH, IMAGE_HEIGHT)
+result = concatenar(img1, img2, IMAGE_WIDTH, IMAGE_HEIGHT)
+result = texto(result, text_left, text_right)
 
 result.save('result.jpg')
