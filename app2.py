@@ -8,7 +8,7 @@ def cortar(img, w, h):
     box = ((width-newWidth)/2, 0, (width+newWidth)/2, height)
     img = img.crop(box)
     img = img.resize((w,h))
-    img.save('teste.jpg')
+    # img.save('teste.jpg')
     return img
 
 def concatenar(img1, img2, width, height):
