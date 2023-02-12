@@ -33,6 +33,13 @@ def texto(img, frase, fonte='arial.ttf', font_size=None):
     draw.text(pos, frase, font=font, stroke_width=stroke_width, stroke_fill='black')
     return img
 
+def open_image(img):
+    """Open an image from a local file or from the web"""
+    if img.startswith('http'):
+        import requests
+        img = requests.get(img, stream=True).raw
+    img = Image.open(img)
+    return img
 
 def this_into_that(img1, img2, text1, text2, width, height, font='arial.ttf', font_size=None):
     """Merges two images horizontally, adding text to each
@@ -45,8 +52,8 @@ def this_into_that(img1, img2, text1, text2, width, height, font='arial.ttf', fo
     font: path to the font to be used
     font_size: size of the font
     """
-    img1 = Image.open(img1)
-    img2 = Image.open(img2)
+    img1 = open_image(img1)
+    img2 = open_image(img2)
     img1 = cortar(img1, width//2, height)
     img2 = cortar(img2, width//2, height)
     img1 = texto(img1, text1, font, font_size)
@@ -54,5 +61,6 @@ def this_into_that(img1, img2, text1, text2, width, height, font='arial.ttf', fo
     result = concatenar(img1, img2, width//2, height)
     return result
 
-result = this_into_that('laptop.jpg', 'paisagem.jpg', 'Turn this...', '...into that!!!', 500*2, 700)
+lorem_picsum = 'https://picsum.photos/1024/1024'
+result = this_into_that(lorem_picsum, lorem_picsum, 'Turn this...', '...into that!!!', 512, 512)
 result.save('result.jpg')
