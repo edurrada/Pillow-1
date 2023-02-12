@@ -19,10 +19,14 @@ def concatenar(img1, img2, width, height):
     result.paste(img2, (width, 0))
     return result
 
-def texto(img, frase, pos, fonte='arial.ttf', tamanho=60):
+def texto(img, frase, fonte='arial.ttf', tamanho=60):
     """Add text to the image"""
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(fonte, tamanho)
+    # draw in the center of the image
+    width, height = img.size
+    text_width, text_height = draw.textsize(frase, font=font)
+    pos = ((width-text_width)/2, 0.05*height)
     draw.text(pos, frase, font=font, stroke_width=2, stroke_fill='black')
     return img
 
@@ -42,8 +46,8 @@ def this_into_that(img1, img2, text1, text2, width, height, font='arial.ttf', fo
     img2 = Image.open(img2)
     img1 = cortar(img1, width//2, height)
     img2 = cortar(img2, width//2, height)
-    img1 = texto(img1, text1, (125,28), font, font_size)
-    img2 = texto(img2, text2, (125,28), font, font_size)
+    img1 = texto(img1, text1, font, font_size)
+    img2 = texto(img2, text2, font, font_size)
     result = concatenar(img1, img2, width//2, height)
     return result
 
