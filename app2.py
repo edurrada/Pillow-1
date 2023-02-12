@@ -26,24 +26,26 @@ def texto(img, frase, pos, fonte='arial.ttf', tamanho=60):
     draw.text(pos, frase, font=font)
     return img
 
-imagem1 = Image.open('laptop.jpg')
-imagem2 = Image.open('paisagem.jpg')
 
-IMAGE_WIDTH = 500
-IMAGE_HEIGHT = 700
+def this_into_that(img1, img2, text1, text2, width, height, font='arial.ttf', font_size=60):
+    """Merges two images horizontally, adding text to each
+    img1: path to the first image
+    img2: path to the second image
+    text1: text to be added to the first image
+    text2: text to be added to the second image
+    width: width of the final image
+    height: height of the final image
+    font: path to the font to be used
+    font_size: size of the font
+    """
+    img1 = Image.open(img1)
+    img2 = Image.open(img2)
+    img1 = cortar(img1, width//2, height)
+    img2 = cortar(img2, width//2, height)
+    img1 = texto(img1, text1, (125,28), font, font_size)
+    img2 = texto(img2, text2, (125,28), font, font_size)
+    result = concatenar(img1, img2, width//2, height)
+    return result
 
-text_1 = 'Turn this...'
-text_2 = '...Into that!!!'
-
-FONT_SIZE = 50
-FONT_PATH = "arial.ttf"
-
-fonte = ImageFont.truetype(FONT_PATH, FONT_SIZE)
-
-img1 = cortar(imagem1, IMAGE_WIDTH, IMAGE_HEIGHT)
-img2 = cortar(imagem2, IMAGE_WIDTH, IMAGE_HEIGHT)
-img1 = texto(img1, text_1, (150,28), FONT_PATH, FONT_SIZE)
-img2 = texto(img2, text_2, (150,28), FONT_PATH, FONT_SIZE)
-result = concatenar(img1, img2, IMAGE_WIDTH, IMAGE_HEIGHT)
-
+result = this_into_that('laptop.jpg', 'paisagem.jpg', 'Turn this...', '...into that!!!', 500*2, 700)
 result.save('result.jpg')
