@@ -19,10 +19,11 @@ def concatenar(img1, img2, width, height):
     result.paste(img2, (width, 0))
     return result
 
+def texto(img, frase, pos, fonte='arial.ttf', tamanho=60):
     """Add text to the image"""
     draw = ImageDraw.Draw(img)
-    draw.text((150,28), frase1, font=fonte)
-    draw.text((600,28), frase2, font=fonte)
+    font = ImageFont.truetype(fonte, tamanho)
+    draw.text(pos, frase, font=font)
     return img
 
 imagem1 = Image.open('laptop.jpg')
@@ -31,8 +32,8 @@ imagem2 = Image.open('paisagem.jpg')
 IMAGE_WIDTH = 500
 IMAGE_HEIGHT = 700
 
-text_left = 'Turn this...'
-text_right = '...Into that!!!'
+text_1 = 'Turn this...'
+text_2 = '...Into that!!!'
 
 FONT_SIZE = 50
 FONT_PATH = "arial.ttf"
@@ -41,7 +42,8 @@ fonte = ImageFont.truetype(FONT_PATH, FONT_SIZE)
 
 img1 = cortar(imagem1, IMAGE_WIDTH, IMAGE_HEIGHT)
 img2 = cortar(imagem2, IMAGE_WIDTH, IMAGE_HEIGHT)
+img1 = texto(img1, text_1, (150,28), FONT_PATH, FONT_SIZE)
+img2 = texto(img2, text_2, (150,28), FONT_PATH, FONT_SIZE)
 result = concatenar(img1, img2, IMAGE_WIDTH, IMAGE_HEIGHT)
-result = texto(result, text_left, text_right)
 
 result.save('result.jpg')
