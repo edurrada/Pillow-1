@@ -3,21 +3,23 @@ from PIL import ImageDraw
 from PIL import ImageFont
 
 def cortar(img, w, h):
-    width, height = img.size
-    newWidth = (height/(h/100))*(w/100)
-    box = ((width-newWidth)/2, 0, (width+newWidth)/2, height)
+    """Crop the image to the desired aspect ratio"""
+    original_width, original_height = img.size
+    newWidth = (original_height/(h/100))*(w/100)
+    box = ((original_width-newWidth)/2, 0, (original_width+newWidth)/2, original_height)
     img = img.crop(box)
     img = img.resize((w,h))
     # img.save('teste.jpg')
     return img
 
 def concatenar(img1, img2, width, height):
+    """Concatenate two images horizontally, assuming they have the same height"""
     result = Image.new("RGB", (2*width, height), "white")
     result.paste(img1, (0, 0))
     result.paste(img2, (width, 0))
     return result
 
-def texto(img, frase1, frase2):
+    """Add text to the image"""
     draw = ImageDraw.Draw(img)
     draw.text((150,28), frase1, font=fonte)
     draw.text((600,28), frase2, font=fonte)
