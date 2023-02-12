@@ -23,7 +23,7 @@ def texto(img, frase, pos, fonte='arial.ttf', tamanho=60):
     """Add text to the image"""
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(fonte, tamanho)
-    draw.text(pos, frase, font=font)
+    draw.text(pos, frase, font=font, stroke_width=2, stroke_fill='black')
     return img
 
 
