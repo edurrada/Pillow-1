@@ -2,70 +2,64 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
-#Quais palavras sobrepor na imagem
-palavra = "Turn this..."
+def cortar(img, w, h):
+    """Crop the image to the desired aspect ratio"""
+    original_width, original_height = img.size
+    newWidth = (original_height/(h/100))*(w/100)
+    box = ((original_width-newWidth)/2, 0, (original_width+newWidth)/2, original_height)
+    img = img.crop(box)
+    img = img.resize((w,h))
+    return img
 
-imagem1= Image.open('laptop.jpg')
-    #abrir a imagem
+def concatenar(img1, img2, width, height):
+    """Concatenate two images horizontally, assuming they have the same height"""
+    result = Image.new("RGB", (2*width, height), "white")
+    result.paste(img1, (0, 0))
+    result.paste(img2, (width, 0))
+    return result
 
-    # abrir para sobreposição
-draw = ImageDraw.Draw(imagem1)
-    #setar qual fonte usar
-fonte = ImageFont.truetype("arial.ttf", 60)
+def texto(img, frase, fonte='arial.ttf', font_size=None):
+    """Add text to the image"""
+    if font_size is None:
+        font_size = img.size[1]//12
+    draw = ImageDraw.Draw(img)
+    font = ImageFont.truetype(fonte, font_size)
+    # draw in the center of the image
+    width, height = img.size
+    text_width, text_height = draw.textsize(frase, font=font)
+    pos = ((width-text_width)/2, 0.05*height)
+    stroke_width = font_size//25
+    draw.text(pos, frase, font=font, stroke_width=stroke_width, stroke_fill='black')
+    return img
 
-    #escrever na imagem o texto
-    ## coordenadas x,y; texto, fonte
-draw.text((350,45), palavra, font=fonte)
+def open_image(img):
+    """Open an image from a local file or from the web"""
+    if img.startswith('http'):
+        import requests
+        img = requests.get(img, stream=True).raw
+    img = Image.open(img)
+    return img
 
-#cortando
-width, height = imagem1.size
-newWidth = (height/7)*5 #dimensao final - 7:5
-box = ((width-newWidth)/2, 0, (width+newWidth)/2, height)
-imagem1 = imagem1.crop(box) 
-#imagem1.save('img1.jpg')
+def this_into_that(img1, img2, text1, text2, width, height, font='arial.ttf', font_size=None):
+    """Merges two images horizontally, adding text to each
+    img1: path to the first image
+    img2: path to the second image
+    text1: text to be added to the first image
+    text2: text to be added to the second image
+    width: width of the final image
+    height: height of the final image
+    font: path to the font to be used
+    font_size: size of the font
+    """
+    img1 = open_image(img1)
+    img2 = open_image(img2)
+    img1 = cortar(img1, width//2, height)
+    img2 = cortar(img2, width//2, height)
+    img1 = texto(img1, text1, font, font_size)
+    img2 = texto(img2, text2, font, font_size)
+    result = concatenar(img1, img2, width//2, height)
+    return result
 
-#salvar
-
-
-palavra = "..into that!!"
-imagem2= Image.open('paisagem.jpg')
-#abrir a imagem
-
-    # abrir para sobreposição
-draw = ImageDraw.Draw(imagem2)
-    #setar qual fonte usar
-fonte = ImageFont.truetype("arial.ttf", 60)
-
-    #escrever na imagem o texto
-    ## coordenadas x,y; texto, fonte
-draw.text((250,45), palavra, font=fonte)
-
-
-
-#------------CONCATENAÇÃO
-
-#img1.size
-w=500
-h=700
-img1_size = imagem1.resize((w,h)) #redimensionar
-img2_size = imagem2.resize((w,h))
-
-# creating a new image and pasting the images
-img3 = Image.new("RGB", (2*w, h), "white")
-
-# pasting the first image (image_name, (position))
-img3.paste(img1_size, (0, 0))
-  
-# pasting the second image (image_name,(position))
-img3.paste(img2_size, (w, 0))
-
-img3.save(f'saida.jpg')
-
-
-
-def cortar():
-    width, height = imagem2.size
-    newWidth = (height/7)*5 #dimensao final - 7:5
-    box = ((width-newWidth)/2, 0, (width+newWidth)/2, height)
-    imagem2 = imagem2.crop(box)
-    return imagem2
+lorem_picsum = 'https://picsum.photos/1024/1024'
+result = this_into_that(lorem_picsum, lorem_picsum, 'Turn this...', '...into that!!!', 512, 512)
+result.save('result.jpg')
